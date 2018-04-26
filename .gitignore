@@ -8,3 +8,7 @@ build/
 !.vscode/c_cpp_properties.json
 .vscode/settings.json
 .vscode/c_cpp_properties.json
+
+keys.py
+__pycache__/
+__pycache__/*

@@ -1,3 +1,3 @@
 
 set FLASK_APP=main.py
-py -m flask run
+py -m flask run --port 80
