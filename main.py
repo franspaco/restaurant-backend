@@ -35,3 +35,6 @@ def put_json(collection):
     content = request.get_json()
     res = client.test[collection].insert(content)
     return dumps(res)
+
+if __name__ == '__main__':
+    app.run()
