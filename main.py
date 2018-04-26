@@ -1,4 +1,4 @@
-import keys
+import os
 from flask import Flask, request, abort
 from pymongo import MongoClient
 from bson.json_util import dumps
@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 
 app = Flask(__name__)
 
-client = MongoClient(keys.mongo_connection[0], keys.mongo_connection[1])
+client = MongoClient(os.environ['MONGO_HOST'], int(os.environ['MONGO_PORT']))
 
 @app.route('/')
 def hello_world():
