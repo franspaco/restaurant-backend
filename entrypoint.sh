@@ -1,5 +1,5 @@
 
-if [ ! -d "restaurant-backend"]; then
+if [ ! -d restaurant-backend]; then
     git clone https://github.com/franspaco/restaurant-backend.git
 fi
 
