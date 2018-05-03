@@ -101,7 +101,7 @@ class User:
             user = User(cursor[0])
             return create_session(user), user
         else:
-            return False
+            return False, None
 
     @staticmethod
     def usr_from_token(token):
