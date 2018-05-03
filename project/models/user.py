@@ -57,10 +57,10 @@ class User:
         return self.is_admin()
 
     def canCreateMaterials(self):
-        if self.is_admin() or self.is_owner():
-            return True
-        else:
-            return False
+        return self.is_admin() or self.is_owner()
+    
+    def canEditInventory(self):
+        return self.is_admin() or self.is_owner() or self.is_cook()
 
     @staticmethod
     def create(username, password, name, email, kind):
