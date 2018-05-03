@@ -8,9 +8,9 @@ bp = Blueprint('user', __name__)
 @bp.route('/login', methods=['POST'])
 def user_login():
     data = req_helper.force_json_key_list('username', 'password')
-    token = User.login(data['username'], data['password'])
+    token, user = User.login(data['username'], data['password'])
     if token:
-        return jsonify(token=token)
+        return jsonify(token=token, kind=user.kind)
     else:
         abort(make_response(jsonify(message="Incorrect login!"), 400)) 
 

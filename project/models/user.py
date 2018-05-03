@@ -99,7 +99,7 @@ class User:
         cursor = db.users.find({"username":username, "password": password})
         if cursor.count() is 1:
             user = User(cursor[0])
-            return create_session(user)
+            return create_session(user), user
         else:
             return False
 
