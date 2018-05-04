@@ -14,9 +14,22 @@ def materials_all():
     cursor = db.materials.find()
     materials = list()
     for doc in cursor:
-        doc['_id'] = str(doc['_id'])
+        doc['id'] = str(doc['_id'])
+        doc.pop('_id', None)
         materials.append(doc)
     return json_util.dumps(materials)
+
+@bp.route('/find', methods=['POST'])
+def material_find():
+    req_helper.force_session_get_user()
+    data = req_helper.force_json_key_list('material-id')
+
+    mat = Material.get_from_id(data['material-id'])
+
+    if mat:
+        return req_helper.json_dump(mat)
+    else:
+        req_helper.throw_not_found("Material not found!")
 
 @bp.route('/create', methods=['POST'])
 def material_create():
@@ -24,7 +37,13 @@ def material_create():
     if not usr.canCreateMaterials():
         abort(make_response(jsonify(message="Cannot create materials"), 403))
     
-    data = req_helper.force_json_key_list('name', 'img_url')
-    mat = Material.create(data['name'], data['img_url'])
+    data = req_helper.force_json_key_list('name', 'img_url', 'units')
+
+    print(data['units'])
+
+    if (data['units'] != 'mL') and (data['units'] != 'g'):
+        req_helper.throw_operation_failed("Invalid units! Use 'mL' or 'g'")
+
+    mat = Material.create(data['name'], data['img_url'], data['units'])
     return jsonify(message="Success!", id=mat.get_id())
     
