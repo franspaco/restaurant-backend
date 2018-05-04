@@ -1,11 +1,12 @@
 
 from project.db import get_db
 from uuid import uuid4
+from bson import ObjectId
 
 def create_session(user):
     sessions = get_db().sessions
     token = str(uuid4())
-    sessions.replace_one({"_id":user.id}, {"token": token}, upsert=True)
+    sessions.replace_one({"_id":ObjectId(user.id)}, {"token": token}, upsert=True)
     return token
 
 def destroy_session(token):

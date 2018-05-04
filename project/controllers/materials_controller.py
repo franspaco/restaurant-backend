@@ -8,16 +8,13 @@ from project.db import get_db
 
 bp = Blueprint('materials', __name__)
 
-@bp.route('/all')
+@bp.route('/all', methods=['POST'])
 def materials_all():
-    db = get_db()
-    cursor = db.materials.find()
-    materials = list()
-    for doc in cursor:
-        doc['id'] = str(doc['_id'])
-        doc.pop('_id', None)
-        materials.append(doc)
-    return json_util.dumps(materials)
+    usr = req_helper.force_session_get_user()
+    if usr.is_costumer():
+        req_helper.throw_not_allowed()
+    materials = Material.query_materials()
+    return jsonify(materials)
 
 @bp.route('/find', methods=['POST'])
 def material_find():
@@ -27,17 +24,21 @@ def material_find():
     mat = Material.get_from_id(data['material-id'])
 
     if mat:
-        return req_helper.json_dump(mat)
+        return jsonify(mat.__dict__)
     else:
         req_helper.throw_not_found("Material not found!")
 
 @bp.route('/create', methods=['POST'])
 def material_create():
     usr = req_helper.force_session_get_user()
-    if not usr.canCreateMaterials():
+    if not usr.canEditMaterials():
         abort(make_response(jsonify(message="Cannot create materials"), 403))
     
     data = req_helper.force_json_key_list('name', 'img_url', 'units')
+
+    if not data["name"].strip():
+        req_helper.throw_operation_failed("Name cannot be empty!")
+
 
     if (data['units'] != 'mL') and (data['units'] != 'g'):
         req_helper.throw_operation_failed("Invalid units! Use 'mL' or 'g'")

@@ -1,6 +1,7 @@
 from project.db import get_db
 from bson import json_util
 from project.sessions import create_session, find_session, destroy_all_user_sessions
+from bson import ObjectId
 
 # Kinds:
 # 1 - Admin
@@ -24,7 +25,7 @@ class User:
 
     def __init__(self, db_user=None):
         if db_user is not None:
-            self.id = db_user['_id']
+            self.id = str(db_user['_id'])
             self.username = db_user['username']
             self.password = db_user['password']
             self.name = db_user['name']
@@ -53,10 +54,10 @@ class User:
     def is_costumer(self):
         return self.kind == User.COSTUMER
 
-    def canCreateUsers(self):
+    def canEditUsers(self):
         return self.is_admin()
 
-    def canCreateMaterials(self):
+    def canEditMaterials(self):
         return self.is_admin() or self.is_owner()
     
     def canEditInventory(self):
@@ -93,6 +94,20 @@ class User:
     def logout(self):
         return destroy_all_user_sessions(self.id)
 
+    def destroy(self):
+        return get_db().users.delete_one({'_id':ObjectId(self.id)}).deleted_count
+
+    @staticmethod
+    def get_from_id(id):
+        try:
+            res = get_db().users.find_one({'_id':ObjectId(id)})
+            if res is not None:
+                return User(res)
+            else:
+                return False
+        except:
+            return False
+
     @staticmethod
     def login(username, password):
         db = get_db()
@@ -116,10 +131,20 @@ class User:
         else:
             return False
 
-    
-
-if __name__ == '__main__':
-    print(User.create("franspaco", "1234", "paco", "lol@example.com", 1))
+    @staticmethod
+    def query_users(kind=None, remove=[]):
+        users = get_db().users
+        query = dict()
+        if kind is not None:
+            query['kind'] = kind
+        cursor = users.find(query)
+        results = list()
+        for doc in cursor:
+            doc['id'] = str(doc.pop('_id'))
+            for key in remove:
+                doc.pop(key, None)
+            results.append(doc)
+        return results
         
 
 
