@@ -59,7 +59,16 @@ def inventory_checkout():
     user = req_helper.force_session_get_user()
     if not user.canEditInventory():
         req_helper.throw_not_allowed()
+    data = req_helper.force_json_key_list('inventory-id')
 
-    #TODO: all
+    item = Item.get_from_id(data['inventory-id'])
+
+    if not item:
+        req_helper.throw_not_found("Item not found!")
+
+    if item.destroy() == 1:
+        return jsonify(message="Ok!")
+    else:
+        req_helper.throw_operation_failed()
 
 

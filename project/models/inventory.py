@@ -43,13 +43,12 @@ class Item:
     @staticmethod
     def get_from_id(id):
         try:
-            res = get_db().materials.find_one({'_id':ObjectId(id)})
-            print(res)
-            if res is not None:
-                return Item(db_item=res)
-            else:
-                return False
+            res = get_db().inventory.find_one({'_id':ObjectId(id)})
         except:
+            return False
+        if res is not None:
+            return Item(db_item=res)
+        else:
             return False
 
     @staticmethod
@@ -63,3 +62,7 @@ class Item:
             doc['id'] = str(doc.pop('_id'))
             results.append(doc)
         return results
+    
+    def destroy(self):
+        #TODO: log checkout
+        return get_db().inventory.delete_one({'_id':ObjectId(self.id)}).deleted_count
