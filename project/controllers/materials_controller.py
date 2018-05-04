@@ -31,7 +31,7 @@ def material_find():
 @bp.route('/create', methods=['POST'])
 def material_create():
     usr = req_helper.force_session_get_user()
-    if not usr.canCreateMaterials():
+    if not usr.canEditMaterials():
         abort(make_response(jsonify(message="Cannot create materials"), 403))
     
     data = req_helper.force_json_key_list('name', 'img_url', 'units')

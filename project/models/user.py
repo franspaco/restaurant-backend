@@ -54,10 +54,10 @@ class User:
     def is_costumer(self):
         return self.kind == User.COSTUMER
 
-    def canCreateUsers(self):
+    def canEditUsers(self):
         return self.is_admin()
 
-    def canCreateMaterials(self):
+    def canEditMaterials(self):
         return self.is_admin() or self.is_owner()
     
     def canEditInventory(self):

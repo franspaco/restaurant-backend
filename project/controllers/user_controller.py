@@ -30,7 +30,7 @@ def user_create():
             abort(make_response(jsonify(message="Missing token!"), 403))
         usr = User.usr_from_token(data['token'])
         # if token is not valid or user cannot create users
-        if not usr or not usr.canCreateUsers():
+        if not usr or not usr.canEditUsers():
             abort(make_response(jsonify(message="Invalid token!"), 403))
 
     user = User.create(data['username'], data['password'], data['email'], data['name'], data['kind'])
@@ -56,7 +56,7 @@ def user_query_type(kind):
 @bp.route('/delete', methods=['DELETE'])
 def user_delete():
     usr = req_helper.force_session_get_user()
-    if not usr.is_admin():
+    if not usr.canEditUsers():
         req_helper.throw_not_allowed()
 
     data = req_helper.force_json_key_list('user-id')
