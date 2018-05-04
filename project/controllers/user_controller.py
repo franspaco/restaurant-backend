@@ -53,3 +53,22 @@ def user_query_type(kind):
 
     return jsonify(users)
 
+@bp.route('/delete', methods=['DELETE'])
+def user_delete():
+    usr = req_helper.force_session_get_user()
+    if not usr.is_admin():
+        req_helper.throw_not_allowed()
+
+    data = req_helper.force_json_key_list('user-id')
+    
+    user = User.get_from_id(data['user-id'])
+
+    if not user:
+        req_helper.throw_not_found("User not found!")
+
+    user.logout()
+    if user.destroy() != 1:
+        return jsonify(message="Ok!")
+    else:
+        req_helper.throw_operation_failed()
+    

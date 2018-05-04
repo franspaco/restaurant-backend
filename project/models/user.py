@@ -1,6 +1,7 @@
 from project.db import get_db
 from bson import json_util
 from project.sessions import create_session, find_session, destroy_all_user_sessions
+from bson import ObjectId
 
 # Kinds:
 # 1 - Admin
@@ -24,7 +25,7 @@ class User:
 
     def __init__(self, db_user=None):
         if db_user is not None:
-            self.id = db_user['_id']
+            self.id = str(db_user['_id'])
             self.username = db_user['username']
             self.password = db_user['password']
             self.name = db_user['name']
@@ -93,6 +94,20 @@ class User:
     def logout(self):
         return destroy_all_user_sessions(self.id)
 
+    def destroy(self):
+        return get_db().users.delete_one({'_id':ObjectId(self.id)})
+
+    @staticmethod
+    def get_from_id(id):
+        try:
+            res = get_db().users.find_one({'_id':ObjectId(id)})
+            if res is not None:
+                return User(res)
+            else:
+                return False
+        except:
+            return False
+
     @staticmethod
     def login(username, password):
         db = get_db()
@@ -130,12 +145,6 @@ class User:
                 doc.pop(key, None)
             results.append(doc)
         return results
-        
-
-    
-
-if __name__ == '__main__':
-    print(User.create("franspaco", "1234", "paco", "lol@example.com", 1))
         
 
 

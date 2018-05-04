@@ -5,6 +5,13 @@ import json
 
 class Material:
 
+    def __init__(self, db_material=None):
+        if db_material is not None:
+            self.id = str(db_material['_id'])
+            self.name = db_material['name']
+            self.img_url = db_material['img_url']
+            self.units = db_material['units']
+
     def get_id(self):
         return str(self.id)
 
@@ -12,8 +19,9 @@ class Material:
     def get_from_id(id):
         try:
             res = get_db().materials.find_one({'_id':ObjectId(id)})
+            print(res)
             if res is not None:
-                return res
+                return Material(db_material=res)
             else:
                 return False
         except:

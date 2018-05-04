@@ -24,7 +24,7 @@ def material_find():
     mat = Material.get_from_id(data['material-id'])
 
     if mat:
-        return req_helper.json_dump(mat)
+        return jsonify(mat.__dict__)
     else:
         req_helper.throw_not_found("Material not found!")
 
