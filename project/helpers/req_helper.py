@@ -1,6 +1,7 @@
 
 from flask import request, abort, current_app, make_response, jsonify
 from project.models.user import User
+import datetime
 
 """
     Make sure a token is provided and it's related to a valid session.
@@ -27,5 +28,30 @@ def force_json_key_list(*args):
     for arg in args:
         if arg not in data:
             abort(make_response(jsonify(message="Missing data!"), 400))
-    
     return data
+
+def get_optional_key(key, default=None):
+    if key in request.json:
+        return request.json[key]
+    else:
+         return default
+
+def json_dump(object):
+    object['id'] = str(object['_id'])
+    object.pop('_id', None)
+    return jsonify(object)
+
+def throw_operation_failed(msg="Operation failed!"):
+    abort(make_response(jsonify(message=msg), 400))
+
+def throw_not_allowed(msg="Insufficient permissions!"):
+    abort(make_response(jsonify(message=msg), 403))
+
+def throw_not_found(msg="Could not find the requested object!"):
+    abort(make_response(jsonify(message=msg), 404))
+
+def validate_date_format(data):
+    try:
+        return datetime.datetime.strptime(data, '%Y-%m-%d')
+    except ValueError:
+        abort(make_response(jsonify(message="Invalid date format! Use YYYY-MM-DD"), 400))
