@@ -67,7 +67,7 @@ def user_delete():
         req_helper.throw_not_found("User not found!")
 
     user.logout()
-    if user.destroy() != 1:
+    if user.destroy() == 1:
         return jsonify(message="Ok!")
     else:
         req_helper.throw_operation_failed()

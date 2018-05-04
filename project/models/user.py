@@ -95,7 +95,7 @@ class User:
         return destroy_all_user_sessions(self.id)
 
     def destroy(self):
-        return get_db().users.delete_one({'_id':ObjectId(self.id)})
+        return get_db().users.delete_one({'_id':ObjectId(self.id)}).deleted_count
 
     @staticmethod
     def get_from_id(id):
