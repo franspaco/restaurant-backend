@@ -1,6 +1,7 @@
 
 from project.db import get_db
 from project.models.material import Material
+from bson import ObjectId
 
 class Item:
 
@@ -12,9 +13,10 @@ class Item:
             self.size = db_item['size']
             self.arrival = db_item['arrival']
             self.cost = db_item['cost']
+            self.location = db_item['location']
 
     @staticmethod
-    def create(material_id, expiration_date, arrival_date, cost, size):
+    def create(material_id, expiration_date, arrival_date, cost, size, location):
         item = Item()
         item.material = material_id
         item.expiration = expiration_date
@@ -32,10 +34,23 @@ class Item:
             "expiration": expiration_date,
             "arrival": arrival_date,
             "size": size,
-            "cost": cost
+            "cost": cost,
+            "location": location
         })
         item.id = str(id)
         return item
+
+    @staticmethod
+    def get_from_id(id):
+        try:
+            res = get_db().materials.find_one({'_id':ObjectId(id)})
+            print(res)
+            if res is not None:
+                return Item(db_item=res)
+            else:
+                return False
+        except:
+            return False
 
     @staticmethod
     def query_items(material=None):

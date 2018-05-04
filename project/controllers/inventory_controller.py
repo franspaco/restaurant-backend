@@ -14,10 +14,12 @@ def inventory_create():
     user = req_helper.force_session_get_user()
     if not user.canEditInventory():
         req_helper.throw_not_allowed()
-    data = req_helper.force_json_key_list('material-id', 'expiration-date', 'size', 'cost')
+    data = req_helper.force_json_key_list('material-id', 'expiration-date', 'size', 'cost', 'location')
     expiration_date = req_helper.validate_date_format(data['expiration-date'])
     if expiration_date < datetime.datetime.now():
         req_helper.throw_operation_failed("Cannot add expired items!")
+    if (data['location'] != 'bar') and (data['location'] != 'restaurant'):
+        req_helper.throw_operation_failed("Invalid location! Use 'bar' or 'restaurant'")
 
     amount = req_helper.get_optional_key('amount', 1)
 
@@ -33,7 +35,7 @@ def inventory_create():
     today = datetime.datetime.today()
 
     for _ in range(amount):
-        item = Item.create(data['material-id'], expiration_date, today, cost, data['size'])
+        item = Item.create(data['material-id'], expiration_date, today, cost, data['size'], data['location'])
         #if error
         if not item:
             req_helper.throw_operation_failed("Could not create! Maybe check the material-id.")
@@ -51,5 +53,13 @@ def inventory_query(material_id):
     result = Item.query_items(material_id)
 
     return jsonify(result)
+
+@bp.route('/delete', methods=['DELETE'])
+def inventory_checkout():
+    user = req_helper.force_session_get_user()
+    if not user.canEditInventory():
+        req_helper.throw_not_allowed()
+
+    #TODO: all
 
 
