@@ -36,7 +36,7 @@ def inventory_create():
         item = Item.create(data['material-id'], data['expiration-date'], today, cost, data['size'])
         #if error
         if not item:
-            req_helper.throw_operation_failed()
+            req_helper.throw_operation_failed("Could not create! Maybe check the material-id.")
 
     return jsonify(message="Ok!", id=str(item.id))
 
