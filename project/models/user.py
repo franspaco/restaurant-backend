@@ -116,6 +116,22 @@ class User:
         else:
             return False
 
+    @staticmethod
+    def query_users(kind=None, remove=[]):
+        users = get_db().users
+        query = dict()
+        if kind is not None:
+            query['kind'] = kind
+        cursor = users.find(query)
+        results = list()
+        for doc in cursor:
+            doc['id'] = str(doc.pop('_id'))
+            for key in remove:
+                doc.pop(key, None)
+            results.append(doc)
+        return results
+        
+
     
 
 if __name__ == '__main__':

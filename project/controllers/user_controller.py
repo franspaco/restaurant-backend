@@ -39,3 +39,17 @@ def user_create():
     else:
         abort(make_response(jsonify(message="Username taken or invalid kind!"), 400))
 
+@bp.route('/query', methods=['POST'], defaults={'kind':None}, strict_slashes=False)
+@bp.route('/query/<int:kind>', methods=['POST'])
+def user_query_type(kind):
+    usr = req_helper.force_session_get_user()
+    if not usr.is_admin():
+        req_helper.throw_not_allowed()
+    
+    if kind is not None and not User.valid_kind(kind):
+        req_helper.throw_operation_failed("Invalid type!")
+
+    users = User.query_users(kind=kind, remove=['password'])
+
+    return jsonify(users)
+

@@ -35,3 +35,14 @@ class Material:
         })
         material.id = id
         return material
+
+    @staticmethod
+    def query_materials(remove=[]):
+        cursor = get_db().materials.find()
+        results = list()
+        for doc in cursor:
+            doc['id'] = str(doc.pop('_id'))
+            for key in remove:
+                doc.pop(key, None)
+            results.append(doc)
+        return results

@@ -8,16 +8,13 @@ from project.db import get_db
 
 bp = Blueprint('materials', __name__)
 
-@bp.route('/all')
+@bp.route('/all', methods=['POST'])
 def materials_all():
-    db = get_db()
-    cursor = db.materials.find()
-    materials = list()
-    for doc in cursor:
-        doc['id'] = str(doc['_id'])
-        doc.pop('_id', None)
-        materials.append(doc)
-    return json_util.dumps(materials)
+    usr = req_helper.force_session_get_user()
+    if usr.is_costumer():
+        req_helper.throw_not_allowed()
+    materials = Material.query_materials()
+    return jsonify(materials)
 
 @bp.route('/find', methods=['POST'])
 def material_find():
