@@ -20,6 +20,15 @@ def inventory_create():
         req_helper.throw_operation_failed("Cannot add expired items!")
 
     amount = req_helper.get_optional_key('amount', 1)
+
+    try:
+        amount = int(amount)
+    except:
+        req_helper.throw_operation_failed("Boi, that amount is not a number!")
+
+    if amount < 1:
+        req_helper.throw_operation_failed("Boi, don't send negative/zero amounts!")
+
     cost = data['cost']/amount
     today = datetime.datetime.today().strftime('%Y-%m-%d')
 

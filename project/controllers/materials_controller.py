@@ -39,8 +39,6 @@ def material_create():
     
     data = req_helper.force_json_key_list('name', 'img_url', 'units')
 
-    print(data['units'])
-
     if (data['units'] != 'mL') and (data['units'] != 'g'):
         req_helper.throw_operation_failed("Invalid units! Use 'mL' or 'g'")
 

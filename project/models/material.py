@@ -21,17 +21,17 @@ class Material:
 
 
     @staticmethod
-    def create(name, img_url, unit):
+    def create(name, img_url, units):
         material = Material()
         material.name = name
         material.img_url = img_url
-        material.units = unit
+        material.units = units
         db = get_db()
 
         id = db.materials.insert({
             "name": name,
             "img_url": img_url,
-            "unit": unit
+            "units": units
         })
         material.id = id
         return material
