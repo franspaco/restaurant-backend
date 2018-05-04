@@ -33,6 +33,12 @@ def user_create():
         if not usr or not usr.canEditUsers():
             abort(make_response(jsonify(message="Invalid token!"), 403))
 
+    if not data['username'].strip():
+        req_helper.throw_operation_failed("Username empty!")
+
+    if not data['password'].strip() or len(data['password']) < 4:
+        req_helper.throw_operation_failed("Password empty or shorter than 4 chars!")
+
     user = User.create(data['username'], data['password'], data['email'], data['name'], data['kind'])
     if user:
         return jsonify(message="Ok!", id=user.get_id())
