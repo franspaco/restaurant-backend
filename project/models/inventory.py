@@ -2,6 +2,7 @@
 from project.db import get_db
 from project.models.material import Material
 from bson import ObjectId
+from datetime import datetime
 
 class Item:
 
@@ -60,6 +61,8 @@ class Item:
         results = list()
         for doc in cursor:
             doc['id'] = str(doc.pop('_id'))
+            doc['arrival'] = doc['arrival'].strftime('%Y-%m-%d')
+            doc['expiration'] = doc['expiration'].strftime('%Y-%m-%d')
             results.append(doc)
         return results
     
