@@ -1,13 +1,21 @@
 
 from project.db import get_db
 from project.models.user import User
+from bson import ObjectId
 
 class Tab:
 
     def __init__(self, db_tab=None):
         if db_tab is not None:
-            #TODO: this
+            self.id = str(db_tab['_id'])
+            self.waiter = db_tab['waiter']
+            self.table = db_tab['table']
+            self.customers = db_tab['customers']
+            self.orders = db_tab['orders']
             pass
+
+    def toDict(self):
+        return self.__dict__
     
     @staticmethod
     def create(waiter_usr, table_no, creation_time, customers=None):
@@ -19,6 +27,7 @@ class Tab:
                 usr = User.user_from_username(val)
                 if not usr:
                     return False
+                print(usr.name)
                 customer_list.append({
                     "id": usr.id,
                     "name": usr.name,
@@ -32,7 +41,22 @@ class Tab:
             },
             "table": table_no,
             "registration": creation_time,
-            "customers": customer_list
+            "customers": customer_list,
+            "orders": list()
         })
 
-        return id
+        return str(id)
+
+    @staticmethod
+    def tab_from_id(id):
+        try:
+            _id = ObjectId(id)
+        except:
+            return False
+        
+        result = get_db().tabs.find_one({'_id':_id})
+
+        if result is not None:
+            return Tab(result)
+        else:
+            return False
