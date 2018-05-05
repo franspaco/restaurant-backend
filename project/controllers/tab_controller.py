@@ -39,7 +39,7 @@ def tab_preview(tab_id):
     if not tab:
         req_helper.throw_not_found("Specified tab could not be found!")
 
-    if not user.canEditTabs() and (user.id not in [val.id for val in tab['customers']]):
+    if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
         req_helper.throw_not_allowed(f"You're not allowed to view tab {tab_id}.")
     
     return jsonify(tab.toDict())
