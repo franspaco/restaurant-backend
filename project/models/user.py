@@ -62,6 +62,9 @@ class User:
     
     def canEditInventory(self):
         return self.is_admin() or self.is_owner() or self.is_cook()
+    
+    def canEditRecipes(self):
+        return self.is_admin() or self.is_owner() or self.is_cook()
 
     @staticmethod
     def create(username, password, name, email, kind):
