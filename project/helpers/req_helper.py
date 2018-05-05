@@ -27,7 +27,7 @@ def force_json_key_list(*args):
         abort(make_response(jsonify(message="No JSON provided!"), 400))
     for arg in args:
         if arg not in data:
-            abort(make_response(jsonify(message="Missing data!"), 400))
+            abort(make_response(jsonify(message="Missing data!", debug=f"Key not found: '{arg}'"), 400))
     return data
 
 def get_optional_key(key, default=None):
