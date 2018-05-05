@@ -16,6 +16,15 @@ class Material:
         return str(self.id)
 
     @staticmethod
+    def query(params=None):
+        cursor = get_db().materials.find(params)
+        out = list()
+        for doc in cursor:
+            recipe = Material(db_material=doc)
+            out.append(recipe)
+        return out
+
+    @staticmethod
     def get_from_id(id):
         try:
             res = get_db().materials.find_one({'_id':ObjectId(id)})
