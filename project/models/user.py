@@ -66,6 +66,9 @@ class User:
     def canEditRecipes(self):
         return self.is_admin() or self.is_owner() or self.is_cook()
 
+    def canEditTabs(self):
+        return self.is_admin() or self.is_owner() or self.is_cook() or self.is_waiter()
+
     @staticmethod
     def create(username, password, name, email, kind):
         usr = User()
@@ -131,6 +134,14 @@ class User:
         if cursor.count() is 1:
             user = User(cursor[0])
             return user
+        else:
+            return False
+
+    @staticmethod
+    def user_from_username(username):
+        res = get_db().users.find_one({'username':username})
+        if res is not None:
+            return User(res)
         else:
             return False
 

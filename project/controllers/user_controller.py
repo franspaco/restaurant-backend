@@ -39,9 +39,9 @@ def user_create():
     if not data['password'].strip() or len(data['password']) < 4:
         req_helper.throw_operation_failed("Password empty or shorter than 4 chars!")
 
-    user = User.create(data['username'], data['password'], data['email'], data['name'], data['kind'])
+    user = User.create(data['username'], data['password'], data['name'], data['email'], data['kind'])
     if user:
-        return jsonify(message="Ok!", id=user.get_id())
+        return jsonify(message="Ok!", id=user.get_id(), kind=user.kind)
     else:
         abort(make_response(jsonify(message="Username taken or invalid kind!"), 400))
 
