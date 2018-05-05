@@ -43,3 +43,22 @@ def tab_preview(tab_id):
         req_helper.throw_not_allowed(f"You're not allowed to view tab {tab_id}.")
     
     return jsonify(tab.toDict())
+
+
+@bp.route('/<tab_id>/addcustomer', methods=['POST'])
+def tab_add_customer(tab_id):
+    user = req_helper.force_session_get_user()
+    tab = Tab.tab_from_id(tab_id)
+
+    data = req_helper.force_json_key_list('username')
+
+    if not tab:
+        req_helper.throw_not_found("Specified tab could not be found!")
+
+    if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
+        req_helper.throw_not_allowed(f"You're not allowed to add costumers to tab {tab_id}.")
+
+    if tab.addCustomer(data['username']):
+        return jsonify(message="Ok!")
+    else:
+        req_helper.throw_operation_failed("Failed to add user!")

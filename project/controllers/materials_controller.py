@@ -45,4 +45,10 @@ def material_create():
 
     mat = Material.create(data['name'], data['img_url'], data['units'])
     return jsonify(message="Success!", id=mat.get_id())
+
+@bp.route('/query/<name>', methods=['POST'])
+def material_query_name(name):
+    req_helper.force_session_get_user()
+    recipes = [val.__dict__ for val in Material.query({'name':{'$regex':'(?i)'+name}})]
+    return jsonify(recipes)
     
