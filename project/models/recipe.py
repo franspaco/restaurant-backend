@@ -13,6 +13,8 @@ class Recipe:
             self.img_url = db_recipe['img_url']
             self.cost = db_recipe['cost']
             self.ingredients = db_recipe['ingredients']
+            self.src = db_recipe['src']
+            self.time= db_recipe['time']
 
     @staticmethod
     def query(params=None):
@@ -24,7 +26,7 @@ class Recipe:
         return out
     
     @staticmethod
-    def create(name, desc, detail, img_url, cost, ingredients):
+    def create(name, desc, detail, img_url, cost, ingredients, src, time):
         in_list = list()
 
         for val in ingredients:
@@ -45,6 +47,8 @@ class Recipe:
             "detail": detail,
             "img_url": img_url,
             "cost": cost,
-            "ingredients": in_list
+            "ingredients": in_list,
+            "src": src,
+            "time": time
         })
         return id
