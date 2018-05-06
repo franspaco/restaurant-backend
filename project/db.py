@@ -12,11 +12,11 @@ def save_kv(key, value):
     kvstore = get_db().kvstore
     kvstore.replace_one({'key':key}, {"key":key, "value": value}, upsert=True)
 
-def load_kv(key):
+def load_kv(key, default=None):
     kvstore = get_db().kvstore
     res = kvstore.find_one({'key':key})
 
     if res is None:
-        return None
+        return default
     else:
         return res['value']
