@@ -25,7 +25,7 @@ def tables_set(number):
 @bp.route('/available', methods=['POST'])
 def tables_get_available():
     user = req_helper.force_session_get_user()
-    if not user.is_admin():
+    if not user.canEditTabs():
         req_helper.throw_not_allowed()
 
     tables = load_kv('tables')
