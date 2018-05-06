@@ -10,11 +10,12 @@ class Item:
         if db_item is not None:
             self.id = str(db_item['_id'])
             self.material = db_item['material']
-            self.expiration = db_item['expiration']
+            self.expiration = db_item['expiration'].strftime('%Y-%m-%d')
             self.size = db_item['size']
-            self.arrival = db_item['arrival']
+            self.arrival = db_item['arrival'].strftime('%Y-%m-%d')
             self.cost = db_item['cost']
             self.location = db_item['location']
+            self.expired = db_item['expiration'] <= datetime.today()
 
     @staticmethod
     def create(material_id, expiration_date, arrival_date, cost, size, location):
@@ -69,10 +70,7 @@ class Item:
         cursor = get_db().inventory.find(query)
         results = list()
         for doc in cursor:
-            doc['id'] = str(doc.pop('_id'))
-            doc['arrival'] = doc['arrival'].strftime('%Y-%m-%d')
-            doc['expiration'] = doc['expiration'].strftime('%Y-%m-%d')
-            results.append(doc)
+            results.append(Item(doc))
         return results
     
     def destroy(self):

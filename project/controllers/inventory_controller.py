@@ -49,9 +49,13 @@ def inventory_query(material_id):
     user = req_helper.force_session_get_user()
     if not user.canEditInventory():
         req_helper.throw_not_allowed()
-    
-    result = Item.query_items(material_id)
 
+    
+    if req_helper.get_optional_key('filter-expired', default=False, force_instance=True):
+        result = [val.__dict__ for val in Item.query_items(material_id) if not val.expired]
+    else:
+        result = [val.__dict__ for val in Item.query_items(material_id)]
+    
     return jsonify(result)
 
 @bp.route('/expired', methods=['POST'])
