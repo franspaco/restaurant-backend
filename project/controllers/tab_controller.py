@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, abort, make_response, jsonify
 from project.models.tab import Tab
 from project.helpers import req_helper
@@ -6,12 +5,13 @@ from datetime import datetime
 
 bp = Blueprint('tab', __name__)
 
+
 @bp.route('/create', methods=['POST'])
 def tab_create():
     user = req_helper.force_session_get_user()
     if not user.canEditTabs():
         req_helper.throw_not_allowed()
-    
+
     data = req_helper.force_json_key_list('table')
 
     try:
@@ -31,6 +31,7 @@ def tab_create():
     else:
         return jsonify(message='Ok!', id=tab_id)
 
+
 @bp.route('/<tab_id>', methods=['POST'])
 def tab_preview(tab_id):
     user = req_helper.force_session_get_user()
@@ -41,7 +42,7 @@ def tab_preview(tab_id):
 
     if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
         req_helper.throw_not_allowed(f"You're not allowed to view tab {tab_id}.")
-    
+
     return jsonify(tab.toDict())
 
 
@@ -63,12 +64,15 @@ def tab_add_customer(tab_id):
     else:
         req_helper.throw_operation_failed("Failed to add user!")
 
+
 @bp.route('/<tab_id>/addorder', methods=['POST'])
 def tabb_add_order(tab_id):
     user = req_helper.force_session_get_user()
     tab = Tab.tab_from_id(tab_id)
 
-    data = req_helper.force_json_key_list('username')
+    data = req_helper.force_json_key_list('recipe-id')
 
     if not tab:
         req_helper.throw_not_found("Specified tab could not be found!")
+
+

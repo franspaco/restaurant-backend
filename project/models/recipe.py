@@ -1,6 +1,7 @@
 
 from project.db import get_db
 from project.models.material import Material
+from bson import ObjectId
 
 class Recipe:
 
@@ -25,6 +26,17 @@ class Recipe:
             recipe = Recipe(db_recipe=doc)
             out.append(recipe)
         return out
+
+    @staticmethod
+    def query_id(id):
+        try:
+            res = get_db().recipes.find_one({'_id':ObjectId(id)})
+            if res is not None:
+                return Recipe(res)
+            else:
+                return None
+        except:
+            return None
 
     @staticmethod
     def get_categories():

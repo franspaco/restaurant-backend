@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, abort, make_response, jsonify
 from project.models.inventory import Item
 from project.helpers import req_helper
@@ -31,32 +30,32 @@ def inventory_create():
     if amount < 1:
         req_helper.throw_operation_failed("Boi, don't send negative/zero amounts!")
 
-    cost = data['cost']/amount
+    cost = data['cost'] / amount
     today = datetime.datetime.today()
 
     for _ in range(amount):
         item = Item.create(data['material-id'], expiration_date, today, cost, data['size'], data['location'])
-        #if error
+        # if error
         if not item:
             req_helper.throw_operation_failed("Could not create! Maybe check the material-id.")
 
     return jsonify(message="Ok!", id=str(item.id))
 
 
-@bp.route('/query', methods=['POST'], defaults={'material_id':None}, strict_slashes=False)
+@bp.route('/query', methods=['POST'], defaults={'material_id': None}, strict_slashes=False)
 @bp.route('/query/<material_id>', methods=['POST'])
 def inventory_query(material_id):
     user = req_helper.force_session_get_user()
     if not user.canEditInventory():
         req_helper.throw_not_allowed()
 
-    
     if req_helper.get_optional_key('filter-expired', default=False, force_instance=True):
         result = [val.__dict__ for val in Item.query_items(material_id) if not val.expired]
     else:
         result = [val.__dict__ for val in Item.query_items(material_id)]
-    
+
     return jsonify(result)
+
 
 @bp.route('/expired', methods=['POST'])
 def inventory_query_expired():
@@ -64,7 +63,7 @@ def inventory_query_expired():
     if not user.canEditInventory():
         req_helper.throw_not_allowed()
 
-    result = [val.__dict__ for val in Item.query({'expiration':{'$lt': datetime.datetime.today() }})]
+    result = [val.__dict__ for val in Item.query({'expiration': {'$lt': datetime.datetime.today()}})]
 
     return jsonify(result)
 
@@ -85,5 +84,3 @@ def inventory_checkout():
         return jsonify(message="Ok!")
     else:
         req_helper.throw_operation_failed()
-
-
