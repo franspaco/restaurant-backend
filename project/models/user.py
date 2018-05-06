@@ -58,7 +58,7 @@ class User:
         return self.is_admin()
 
     def canEditMaterials(self):
-        return self.is_admin() or self.is_owner()
+        return self.is_admin() or self.is_owner() or self.is_cook()
     
     def canEditInventory(self):
         return self.is_admin() or self.is_owner() or self.is_cook()
