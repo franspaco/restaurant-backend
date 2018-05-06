@@ -62,3 +62,13 @@ def tab_add_customer(tab_id):
         return jsonify(message="Ok!")
     else:
         req_helper.throw_operation_failed("Failed to add user!")
+
+@bp.route('/<tab_id>/addorder', methods=['POST'])
+def tabb_add_order(tab_id):
+    user = req_helper.force_session_get_user()
+    tab = Tab.tab_from_id(tab_id)
+
+    data = req_helper.force_json_key_list('username')
+
+    if not tab:
+        req_helper.throw_not_found("Specified tab could not be found!")
