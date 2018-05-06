@@ -30,9 +30,15 @@ def force_json_key_list(*args):
             abort(make_response(jsonify(message="Missing data!", debug=f"Key not found: '{arg}'"), 400))
     return data
 
-def get_optional_key(key, default=None):
+def get_optional_key(key, default=None, force_instance=False):
     if key in request.json:
-        return request.json[key]
+        if force_instance:
+            if isinstance(request.json[key], type(default)):
+                return request.json[key]
+            else:
+                return default
+        else:
+            return request.json[key]
     else:
          return default
 
