@@ -11,7 +11,7 @@ def recipe_create():
     if not user.canEditRecipes():
         req_helper.throw_not_allowed()
 
-    data = req_helper.force_json_key_list('name', 'desc', 'detail', 'img_url', 'cost', 'ingredients', 'time', 'src')
+    data = req_helper.force_json_key_list('name', 'desc', 'detail', 'img_url', 'cost', 'ingredients', 'time', 'src', 'category')
 
     if not data["name"].strip():
         req_helper.throw_operation_failed("Name cannot be empty!")
@@ -25,7 +25,7 @@ def recipe_create():
     except:
         req_helper.throw_operation_failed("Cost and time need to be integers!")
 
-    recipe_id = Recipe.create(data['name'], data['desc'], data['detail'], data['img_url'], cost, data['ingredients'], data['src'], time)
+    recipe_id = Recipe.create(data['name'], data['desc'], data['detail'], data['img_url'], cost, data['ingredients'], data['src'], time, data['category'])
 
     if recipe_id:
        return jsonify(message="Ok!", id=str(recipe_id))
@@ -42,4 +42,16 @@ def recipe_get_all():
 def recipe_query_name(name):
     req_helper.force_session_get_user()
     recipes = [val.__dict__ for val in Recipe.query({'name':{'$regex':'(?i)'+name}})]
+    return jsonify(recipes)
+
+@bp.route('/categories', methods=['POST'])
+def get_categories():
+    req_helper.force_session_get_user()
+    cats = Recipe.get_categories()
+    return jsonify(cats)
+
+@bp.route('/by-category/<category>', methods=['POST'])
+def get_by_category(category):
+    req_helper.force_session_get_user()
+    recipes = [val.__dict__ for val in Recipe.query({'category':category.lower()})]
     return jsonify(recipes)
