@@ -50,6 +50,9 @@ def throw_not_allowed(msg="Insufficient permissions!"):
 def throw_not_found(msg="Could not find the requested object!"):
     abort(make_response(jsonify(message=msg), 404))
 
+def throw_teapot(msg="Well... this is awkward."):
+    abort(make_response(jsonify(message=msg), 418))
+
 def validate_date_format(data):
     try:
         return datetime.datetime.strptime(data, '%Y-%m-%d')
