@@ -53,6 +53,15 @@ class Item:
             return False
 
     @staticmethod
+    def query(params=None):
+        cursor = get_db().inventory.find(params)
+        out = list()
+        for doc in cursor:
+            recipe = Item(db_item=doc)
+            out.append(recipe)
+        return out
+
+    @staticmethod
     def query_items(material=None):
         query = dict()
         if material is not None:

@@ -54,6 +54,17 @@ def inventory_query(material_id):
 
     return jsonify(result)
 
+@bp.route('/expired', methods=['POST'])
+def inventory_query_expired():
+    user = req_helper.force_session_get_user()
+    if not user.canEditInventory():
+        req_helper.throw_not_allowed()
+
+    result = [val.__dict__ for val in Item.query({'expiration':{'$lt': datetime.datetime.today() }})]
+
+    return jsonify(result)
+
+
 @bp.route('/delete', methods=['DELETE'])
 def inventory_checkout():
     user = req_helper.force_session_get_user()
