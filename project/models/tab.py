@@ -7,6 +7,11 @@ from datetime import datetime, timedelta
 
 class Tab:
 
+    class Order:
+        ORDERED = 0
+        READY = 1
+        SERVED = 2
+
     def __init__(self, db_tab=None):
         if db_tab is not None:
             self.id = str(db_tab['_id'])
@@ -46,17 +51,47 @@ class Tab:
             return False
 
         new_data = {
-            'id': recipe.id,
+            'id': str(ObjectId()),
+            'recipe-id': recipe.id,
             'name': recipe.name,
             'img_url': recipe.img_url,
             'cost': recipe.cost,
             'category': recipe.category,
             'order-time': datetime.now().isoformat(),
             'eta': (datetime.now() + timedelta(minutes=recipe.time)).isoformat(),
-            'ready': False
+            'status': 0,
+            'tab-id': self.id
         }
         self.orders.append(new_data)
         result = get_db().tabs.update_one({'_id': ObjectId(self.id)}, {'$push': {'orders': new_data}})
+        if result.modified_count == 1:
+            return True
+        else:
+            return False
+
+    def get_order(self, id):
+        for order in self.orders:
+            print(f"{order['id']} vs {id}")
+            if order['id'] == id:
+                print("Match!!")
+                return order
+        return None
+
+    def dispatch(self, order_id):
+        order = self.get_order(order_id)
+        if order is None:
+            return False
+        result = get_db().tabs.update_one(
+            {
+                '_id':ObjectId(self.id), 
+                'orders.id':order['id']
+            }, 
+            {
+                '$inc':{
+                    'orders.$.status':1
+                }
+            }
+        )
         if result.modified_count == 1:
             return True
         else:
@@ -129,5 +164,15 @@ class Tab:
 
 
     @staticmethod
-    def get_orders():
-        pass
+    def get_orders(status=None):
+        if status is not None:
+            status = {"orders.status":status}
+        else:
+            status = {}
+        pipeline = [
+            {"$unwind":"$orders"},
+            {'$match':status},
+            {'$replaceRoot':{'newRoot':'$orders'}}
+        ]
+        cursor = get_db().tabs.aggregate(pipeline)
+        return [doc for doc in cursor]

@@ -32,6 +32,35 @@ def tab_create():
         return jsonify(message='Ok!', id=tab_id)
 
 
+@bp.route('/mytabs', methods=['POST'])
+def tabs_get_by_user():
+    user = req_helper.force_session_get_user()
+    if user.is_staff():
+        results = Tab.get_waiter_tabs(user.id)
+    else:
+        results = Tab.get_customer_tabs(user.id)
+    out = [val.__dict__ for val in results]
+    return jsonify(out)
+
+
+@bp.route('/orders', methods=['POST'])
+def get_orders():
+    user = req_helper.force_session_get_user()
+    if not user.is_staff():
+        req_helper.throw_not_allowed()
+    
+    if user.is_waiter():
+        # Get ready
+        out = Tab.get_orders(1)
+    elif user.is_cook():
+        # Get unready
+        out = Tab.get_orders(0)
+    else:
+        # Get all
+        out = Tab.get_orders()
+    return jsonify(out)
+
+
 @bp.route('/<tab_id>', methods=['POST'])
 def tab_preview(tab_id):
     user = req_helper.force_session_get_user()
@@ -83,21 +112,40 @@ def tab_add_order(tab_id):
     else:
         req_helper.throw_operation_failed("Failed to add order!")
 
-@bp.route('/mytabs', methods=['POST'])
-def tabs_get_by_user():
-    user = req_helper.force_session_get_user()
-    if user.is_staff():
-        results = Tab.get_waiter_tabs(user.id)
-    else:
-        results = Tab.get_customer_tabs(user.id)
-    out = [val.__dict__ for val in results]
-    return jsonify(out)
 
-@bp.route('/orders')
-def get_orders():
+@bp.route('/<tab_id>/dispatch/<order_id>', methods=['POST'])
+def tab_dispatch_order(tab_id, order_id):
     user = req_helper.force_session_get_user()
-    if user.is_customer():
+    if not user.is_staff():
         req_helper.throw_not_allowed()
+    # Look for tab and abort if not found
+    tab = Tab.tab_from_id(tab_id)
+    if not tab:
+        req_helper.throw_not_found("Specified tab could not be found!")
 
-    
-    
+    order = tab.get_order(order_id)
+
+    if order is None:
+        req_helper.throw_not_found("The order id was not found in this tab.")
+
+    if order['status'] == Tab.Order.SERVED:
+        req_helper.throw_operation_failed("This order has already reached the last status.")
+
+    if user.is_cook():
+        if order['status'] == 0:
+            result = tab.dispatch(order_id)
+        else:
+            req_helper.throw_operation_failed("A cook cannot do this.")
+    elif user.is_waiter():
+        if order['status'] == 1:
+            result = tab.dispatch(order_id)
+        else:
+            req_helper.throw_operation_failed("A cook cannot do this.")
+    else:
+        result = tab.dispatch(order_id)
+
+    if result:
+        return jsonify(message='Ok!', new_status=order['status']+1)
+    else:
+        req_helper.throw_operation_failed("Failed to dispatch order!")
+
