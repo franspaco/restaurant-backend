@@ -51,8 +51,11 @@ class User:
     def is_waiter(self):
         return self.kind == User.WAITER
     
-    def is_costumer(self):
+    def is_customer(self):
         return self.kind == User.COSTUMER
+
+    def is_staff(self):
+        return self.is_admin() or self.is_owner() or self.is_cook() or self.is_waiter()
 
     def canEditUsers(self):
         return self.is_admin()

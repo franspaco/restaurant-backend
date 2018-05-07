@@ -10,7 +10,7 @@ bp = Blueprint('materials', __name__)
 @bp.route('/all', methods=['POST'])
 def materials_all():
     usr = req_helper.force_session_get_user()
-    if usr.is_costumer():
+    if usr.is_customer():
         req_helper.throw_not_allowed()
     materials = Material.query_materials()
     return jsonify(materials)
