@@ -31,6 +31,15 @@ def tab_create():
     else:
         return jsonify(message='Ok!', id=tab_id)
 
+@bp.route('/all', methods=['POST'])
+def tab_all():
+    user = req_helper.force_session_get_user()
+    if not user.is_staff():
+        req_helper.throw_not_allowed()
+    out = [tab.toDict() for tab in Tab.query()]
+    return jsonify(out)
+
+    
 
 @bp.route('/mytabs', methods=['POST'])
 def tabs_get_by_user():
