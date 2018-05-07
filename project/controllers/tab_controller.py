@@ -66,7 +66,7 @@ def tab_add_customer(tab_id):
 
 
 @bp.route('/<tab_id>/addorder', methods=['POST'])
-def tabb_add_order(tab_id):
+def tab_add_order(tab_id):
     user = req_helper.force_session_get_user()
     tab = Tab.tab_from_id(tab_id)
 
@@ -75,4 +75,29 @@ def tabb_add_order(tab_id):
     if not tab:
         req_helper.throw_not_found("Specified tab could not be found!")
 
+    if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
+        req_helper.throw_not_allowed(f"You're not allowed to add orders to tab {tab_id}.")
 
+    if tab.addOrder(data['recipe-id']):
+        return jsonify(message="Ok!")
+    else:
+        req_helper.throw_operation_failed("Failed to add order!")
+
+@bp.route('/mytabs', methods=['POST'])
+def tabs_get_by_user():
+    user = req_helper.force_session_get_user()
+    if user.is_staff():
+        results = Tab.get_waiter_tabs(user.id)
+    else:
+        results = Tab.get_customer_tabs(user.id)
+    out = [val.__dict__ for val in results]
+    return jsonify(out)
+
+@bp.route('/orders')
+def get_orders():
+    user = req_helper.force_session_get_user()
+    if user.is_customer():
+        req_helper.throw_not_allowed()
+
+    
+    

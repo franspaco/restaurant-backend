@@ -1,7 +1,9 @@
 
 from project.db import get_db
 from project.models.user import User
+from project.models.recipe import Recipe
 from bson import ObjectId
+from datetime import datetime, timedelta
 
 class Tab:
 
@@ -12,7 +14,6 @@ class Tab:
             self.table = db_tab['table']
             self.customers = db_tab['customers']
             self.orders = db_tab['orders']
-            pass
 
     def toDict(self):
         return self.__dict__
@@ -37,7 +38,31 @@ class Tab:
             return True
         else:
             return False
-    
+
+    def addOrder(self, recipe_id):
+        recipe = Recipe.query_id(recipe_id)
+
+        if recipe is None:
+            return False
+
+        new_data = {
+            'id': recipe.id,
+            'name': recipe.name,
+            'img_url': recipe.img_url,
+            'cost': recipe.cost,
+            'category': recipe.category,
+            'order-time': datetime.now().isoformat(),
+            'eta': (datetime.now() + timedelta(minutes=recipe.time)).isoformat(),
+            'ready': False
+        }
+        self.orders.append(new_data)
+        result = get_db().tabs.update_one({'_id': ObjectId(self.id)}, {'$push': {'orders': new_data}})
+        if result.modified_count == 1:
+            return True
+        else:
+            return False
+
+
     @staticmethod
     def create(waiter_usr, table_no, creation_time, customers=None):
 
@@ -66,8 +91,8 @@ class Tab:
             "customers": customer_list,
             "orders": list()
         })
-
         return str(id)
+
 
     @staticmethod
     def tab_from_id(id):
@@ -82,3 +107,27 @@ class Tab:
             return Tab(result)
         else:
             return False
+
+
+    @staticmethod
+    def query(params=None):
+        cursor = get_db().tabs.find(params)
+        out = list()
+        for doc in cursor:
+            out.append(Tab(db_tab=doc))
+        return out
+
+
+    @staticmethod
+    def get_waiter_tabs(uid):
+        return Tab.query({'waiter.id': uid})
+
+
+    @staticmethod
+    def get_customer_tabs(uid):
+        return Tab.query({'customers.id': uid})
+
+
+    @staticmethod
+    def get_orders():
+        pass
