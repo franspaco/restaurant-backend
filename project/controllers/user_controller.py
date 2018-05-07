@@ -59,7 +59,7 @@ def user_query_type(kind):
 
     return jsonify(users)
 
-@bp.route('/delete', methods=['DELETE'])
+@bp.route('/delete', methods=['POST'])
 def user_delete():
     usr = req_helper.force_session_get_user()
     if not usr.canEditUsers():

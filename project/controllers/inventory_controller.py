@@ -68,7 +68,7 @@ def inventory_query_expired():
     return jsonify(result)
 
 
-@bp.route('/delete', methods=['DELETE'])
+@bp.route('/delete', methods=['POST'])
 def inventory_checkout():
     user = req_helper.force_session_get_user()
     if not user.canEditInventory():
