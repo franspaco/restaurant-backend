@@ -39,7 +39,7 @@ def tabs_get_by_user():
         results = Tab.get_waiter_tabs(user.id)
     else:
         results = Tab.get_customer_tabs(user.id)
-    out = [val.__dict__ for val in results]
+    out = [tab.toDict() for tab in results]
     return jsonify(out)
 
 
@@ -71,7 +71,6 @@ def tab_preview(tab_id):
 
     if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
         req_helper.throw_not_allowed(f"You're not allowed to view tab {tab_id}.")
-
     return jsonify(tab.toDict())
 
 
@@ -107,8 +106,10 @@ def tab_add_order(tab_id):
     if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
         req_helper.throw_not_allowed(f"You're not allowed to add orders to tab {tab_id}.")
 
-    if tab.addOrder(data['recipe-id']):
-        return jsonify(message="Ok!")
+    out = tab.addOrder(data['recipe-id'])
+    # Weird thing to make sure it catches only a False and not a 0
+    if not(out is False):
+        return jsonify(message="Ok!", time=out)
     else:
         req_helper.throw_operation_failed("Failed to add order!")
 
@@ -149,3 +150,26 @@ def tab_dispatch_order(tab_id, order_id):
     else:
         req_helper.throw_operation_failed("Failed to dispatch order!")
 
+
+@bp.route('/<tab_id>/total', methods=['POST'])
+def tab_total(tab_id):
+    user = req_helper.force_session_get_user()
+    tab = Tab.tab_from_id(tab_id)
+    if not tab:
+        req_helper.throw_not_found("Specified tab could not be found!")
+    
+    if not user.canEditTabs() and (user.id not in [val['id'] for val in tab.customers]):
+        req_helper.throw_not_allowed(f"You're not allowed to view tab {tab_id}.")
+
+    return jsonify(total=tab.get_total())
+
+
+@bp.route('/<tab_id>/close', methods=['POST'])
+def tab_close(tab_id):
+    user = req_helper.force_session_get_user()
+    if not user.is_staff():
+        req_helper.throw_not_allowed()
+    tab = Tab.tab_from_id(tab_id)
+    if not tab:
+        req_helper.throw_not_found("Specified tab could not be found!")
+    tab.close()

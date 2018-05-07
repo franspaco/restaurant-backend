@@ -20,8 +20,17 @@ class Tab:
             self.customers = db_tab['customers']
             self.orders = db_tab['orders']
 
-    def toDict(self):
-        return self.__dict__
+    def toDict(self, add_total=True):
+        out = self.__dict__
+        if add_total:
+            out['total'] = self.get_total()
+        return out
+
+    def get_total(self):
+        tot = 0.0
+        for order in self.orders:
+            tot += order['cost']
+        return tot
 
     def addCustomer(self, username):
         usr = User.user_from_username(username)
@@ -65,7 +74,7 @@ class Tab:
         self.orders.append(new_data)
         result = get_db().tabs.update_one({'_id': ObjectId(self.id)}, {'$push': {'orders': new_data}})
         if result.modified_count == 1:
-            return True
+            return recipe.time
         else:
             return False
 
@@ -97,6 +106,8 @@ class Tab:
         else:
             return False
 
+    def close(self):
+        pass
 
     @staticmethod
     def create(waiter_usr, table_no, creation_time, customers=None):
