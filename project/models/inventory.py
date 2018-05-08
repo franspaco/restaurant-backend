@@ -16,6 +16,8 @@ class Item:
             self.cost = db_item['cost']
             self.location = db_item['location']
             self.expired = db_item['expiration'] <= datetime.today()
+            self.material_name = db_item['material_name']
+    
 
     @staticmethod
     def create(material_id, expiration_date, arrival_date, cost, size, location):
@@ -26,7 +28,8 @@ class Item:
         item.arrival = arrival_date
         item.cost = cost
 
-        if not Material.get_from_id(material_id):
+        mat = Material.get_from_id(material_id)
+        if not mat:
             return False
 
         db = get_db()
@@ -37,7 +40,8 @@ class Item:
             "arrival": arrival_date,
             "size": size,
             "cost": cost,
-            "location": location
+            "location": location,
+            "material_name": mat.name
         })
         item.id = str(id)
         return item
@@ -74,5 +78,13 @@ class Item:
         return results
     
     def destroy(self):
-        #TODO: log checkout
-        return get_db().inventory.delete_one({'_id':ObjectId(self.id)}).deleted_count
+        res =  get_db().inventory.delete_one({'_id':ObjectId(self.id)})
+        if res.deleted_count == 1:
+            item_dict = self.__dict__
+            item_dict['arrival'] = datetime.strptime(self.arrival, '%Y-%m-%d')
+            item_dict['expiration'] = datetime.strptime(self.expiration, '%Y-%m-%d')
+            item_dict['checkout_time'] = datetime.now()
+            get_db().inventory_log.insert(item_dict)
+            return True
+        else:
+            return False

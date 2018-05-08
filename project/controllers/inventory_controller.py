@@ -80,7 +80,7 @@ def inventory_checkout():
     if not item:
         req_helper.throw_not_found("Item not found!")
 
-    if item.destroy() == 1:
+    if item.destroy():
         return jsonify(message="Ok!")
     else:
         req_helper.throw_operation_failed()
