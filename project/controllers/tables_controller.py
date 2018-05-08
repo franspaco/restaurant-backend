@@ -29,6 +29,8 @@ def tables_get_available():
         req_helper.throw_not_allowed()
 
     tables = load_kv('tables')
+    if tables is None:
+        req_helper.throw_operation_failed("Hey use /tables/<number> to set up tables!")
 
     used_tables = get_db().tabs.find().distinct("table")
 
