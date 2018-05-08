@@ -12,7 +12,7 @@ def recipe_create():
         req_helper.throw_not_allowed()
 
     data = req_helper.force_json_key_list('name', 'desc', 'detail', 'img_url', 'cost', 'ingredients', 'time', 'src',
-                                          'category')
+                                          'category', 'calories')
 
     if not data["name"].strip():
         req_helper.throw_operation_failed("Name cannot be empty!")
@@ -23,11 +23,12 @@ def recipe_create():
     try:
         cost = float(data['cost'])
         time = int(data['time'])
+        calories = int(data['calories'])
     except:
         req_helper.throw_operation_failed("Cost and time need to be integers!")
 
     recipe_id = Recipe.create(data['name'], data['desc'], data['detail'], data['img_url'], cost, data['ingredients'],
-                              data['src'], time, data['category'])
+                              data['src'], time, data['category'], calories)
 
     if recipe_id:
         return jsonify(message="Ok!", id=str(recipe_id))

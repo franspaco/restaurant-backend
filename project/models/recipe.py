@@ -17,6 +17,7 @@ class Recipe:
             self.src = db_recipe['src']
             self.time = db_recipe['time']
             self.category = db_recipe['category'].title()
+            self.calories = db_recipe['calories']
 
     @staticmethod
     def query(params=None):
@@ -43,7 +44,7 @@ class Recipe:
         return get_db().recipes.find().distinct("category")
     
     @staticmethod
-    def create(name, desc, detail, img_url, cost, ingredients, src, time, category):
+    def create(name, desc, detail, img_url, cost, ingredients, src, time, category, calories):
         in_list = list()
 
         for val in ingredients:
@@ -67,6 +68,7 @@ class Recipe:
             "ingredients": in_list,
             "src": src,
             "time": time,
-            "category": category.lower()
+            "category": category.lower(),
+            "calories": calories
         })
         return id
