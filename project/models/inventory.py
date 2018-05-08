@@ -2,7 +2,7 @@
 from project.db import get_db
 from project.models.material import Material
 from bson import ObjectId
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Item:
 
@@ -88,3 +88,32 @@ class Item:
             return True
         else:
             return False
+
+    @staticmethod
+    def pie_chart_report():
+        pipeline = [
+            {
+                '$match':{
+                    'checkout_time':{
+                        '$gt': datetime.now() - timedelta(days=1)
+                    }
+                }
+            },
+            {
+                '$group':{
+                    '_id': '$material_name',
+                    'count':{ '$sum':1},
+                    'total': { '$sum': '$cost'}
+                }
+            },
+            {
+                '$project':{
+                    '_id':0,
+                    'name':'$_id',
+                    'count':1,
+                    'total':1
+                }
+            }
+        ]
+        cursor = get_db().inventory_log.aggregate(pipeline)
+        return [doc for doc in cursor]

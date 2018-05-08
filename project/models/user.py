@@ -57,6 +57,9 @@ class User:
     def is_staff(self):
         return self.is_admin() or self.is_owner() or self.is_cook() or self.is_waiter()
 
+    def is_management(self):
+        return self.is_admin() or self.is_owner()
+
     def canEditUsers(self):
         return self.is_admin()
 
