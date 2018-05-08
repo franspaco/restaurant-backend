@@ -12,7 +12,12 @@ def user_login():
     if token:
         return jsonify(token=token, kind=user.kind)
     else:
-        abort(make_response(jsonify(message="Incorrect login!"), 400)) 
+        abort(make_response(jsonify(message="Incorrect login!"), 400))
+
+@bp.route('/validate', methods=['POST'])
+def token_validate():
+    user = req_helper.force_session_get_user()
+    return jsonify(kind=user.kind)
 
 @bp.route('/logout', methods=['POST'])
 def user_logout():
