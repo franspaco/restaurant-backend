@@ -181,4 +181,7 @@ def tab_close(tab_id):
     tab = Tab.tab_from_id(tab_id)
     if not tab:
         req_helper.throw_not_found("Specified tab could not be found!")
-    tab.close()
+    if tab.close():
+        return jsonify(message="Ok!")
+    else:
+        req_helper.throw_operation_failed("Failed to delete tab!")

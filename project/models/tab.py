@@ -107,7 +107,14 @@ class Tab:
             return False
 
     def close(self):
-        pass
+        res = get_db().tabs.delete_one({'_id': ObjectId(self.id)})
+        if res.deleted_count == 1:
+            tab_dict = self.toDict()
+            tab_dict['close_time'] = datetime.now()
+            get_db().tab_log.insert(tab_dict)
+            return True
+        else:
+            return False
 
     @staticmethod
     def create(waiter_usr, table_no, creation_time, customers=None):
