@@ -34,5 +34,5 @@ def tables_get_available():
 
     available = [ i for i in range(1, tables+1) if i not in used_tables]
 
-    return jsonify(available)
+    return jsonify(tables=available)
 
