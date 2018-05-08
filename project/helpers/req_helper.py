@@ -14,7 +14,10 @@ def force_session_get_user():
         usr = User.usr_from_token(data['token'])
         if usr:
             return usr
-    abort(make_response(jsonify(message="Please log in to do this!"), 403))
+        else:
+            abort(make_response(jsonify(message="Your token is invalid!"), 403))
+    else:
+        abort(make_response(jsonify(message="No token received!"), 403))
 
 """ 
     Make sure all the requested keys are in the JSON request.
