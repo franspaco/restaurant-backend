@@ -35,7 +35,7 @@ def material_create():
     if not usr.canEditMaterials():
         abort(make_response(jsonify(message="Cannot create materials"), 403))
 
-    data = req_helper.force_json_key_list('name', 'img_url', 'units', 'calories')
+    data = req_helper.force_json_key_list('name', 'img_url', 'units', 'calories', 'desc')
 
     if not data["name"].strip():
         req_helper.throw_operation_failed("Name cannot be empty!")
@@ -48,7 +48,7 @@ def material_create():
     except:
         req_helper.throw_operation_failed("Calories need to be integers!")
 
-    mat = Material.create(data['name'], data['img_url'], data['units'], calories)
+    mat = Material.create(data['name'], data['img_url'], data['units'], calories, data['desc'])
     return jsonify(message="Success!", id=mat.get_id())
 
 

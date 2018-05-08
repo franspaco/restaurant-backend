@@ -12,6 +12,7 @@ class Material:
             self.img_url = db_material['img_url']
             self.units = db_material['units']
             self.calories = db_material['calories']
+            self.desc = db_material['desc']
 
     def get_id(self):
         return str(self.id)
@@ -39,19 +40,21 @@ class Material:
 
 
     @staticmethod
-    def create(name, img_url, units, calories):
+    def create(name, img_url, units, calories, desc):
         material = Material()
         material.name = name
         material.img_url = img_url
         material.units = units
         material.calories = calories
+        material.desc = desc
         db = get_db()
 
         id = db.materials.insert({
             "name": name,
             "img_url": img_url,
             "units": units,
-            "calories": calories
+            "calories": calories,
+            "desc": desc
         })
         material.id = id
         return material
