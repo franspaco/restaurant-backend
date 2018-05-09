@@ -8,22 +8,30 @@ import datetime
 bp = Blueprint('reports', __name__)
 
 
-@bp.route('/inventory', methods=['POST'], defaults={'days':1}, strict_slashes=False)
-@bp.route('/inventory/<int:days>', methods=['POST'])
-def reports_inventory(days):
+@bp.route('/inventory/usage', methods=['POST'], strict_slashes=False)
+@bp.route('/inventory/usage/<int:days>', methods=['POST'])
+def reports_usage_inventory(days=1):
     user = req_helper.force_session_get_user()
     if not user.is_management():
         req_helper.throw_not_allowed()
-    
-    return jsonify(data=InventoryReport.pie_chart_report(days))
+    return jsonify(data=InventoryReport.usage_pie_chart_report(days))
 
-@bp.route('/cutomer', methods=['POST'])
+
+@bp.route('/inventory/expense', methods=['POST'], strict_slashes=False)
+@bp.route('/inventory/expense/<int:days>', methods=['POST'])
+def reports_expense_inventory(days=1):
+    user = req_helper.force_session_get_user()
+    if not user.is_management():
+        req_helper.throw_not_allowed()
+    return jsonify(data=InventoryReport.expense_pie_chart_report(days))
+
+
+@bp.route('/customer/tabs', methods=['POST'])
 def reports_customer():
     user = req_helper.force_session_get_user()
-    if not user.is_management():
-        req_helper.throw_not_allowed()
-    
-    return jsonify(data=TabReport.pie_chart_report(user.id))
+    if not user.is_customer():
+        req_helper.throw_not_allowed("You are not a customer, duh!")
+    return jsonify(data=TabReport.customer_pie_chart_report(user.id))
 
 
 
