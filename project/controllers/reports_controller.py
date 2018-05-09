@@ -15,4 +15,30 @@ def reports_inventory():
     
     return jsonify(data=Item.pie_chart_report())
 
+"""
+[
+    {
+        '$match':{
+            'customers.id':"5af220ed67cd77405c0f16d5"
+        }
+    },
+    {
+        '$unwind':'$orders'
+    },
+    {
+        '$group':{
+            '_id':'$orders.category',
+            'value':{ '$sum': 1}
+        }
+    },
+    {
+        '$project':{
+            '_id':0,
+            'name':'$_id',
+            'value':1
+        }
+    }
+]
+"""
+
     
