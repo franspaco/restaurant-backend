@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 def get_db():
     if 'db' not in g:
-        g.db = MongoClient(os.environ['MONGO_HOST'], int(os.environ['MONGO_PORT'])).restaurants
+        g.db = MongoClient(os.environ.get('MONGO_HOST','localhost'), int(os.environ.get('MONGO_PORT', 27017))).restaurants
     return g.db
 
 def save_kv(key, value):
