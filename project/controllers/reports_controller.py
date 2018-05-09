@@ -9,7 +9,7 @@ bp = Blueprint('reports', __name__)
 
 
 @bp.route('/inventory', methods=['POST'], defaults={'days':1}, strict_slashes=False)
-@bp.route('/inventory/<days>', methods=['POST'])
+@bp.route('/inventory/<int:days>', methods=['POST'])
 def reports_inventory(days):
     user = req_helper.force_session_get_user()
     if not user.is_management():

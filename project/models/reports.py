@@ -27,7 +27,7 @@ class InventoryReport:
 
 class TabReport:
     @staticmethod
-    def pie_chart_report(customer_id):
+    def client_pie_chart_report(customer_id):
         pipeline = [
             {'$match':{
                 'customers.id':customer_id
