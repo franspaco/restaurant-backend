@@ -57,16 +57,25 @@ def get_orders():
     user = req_helper.force_session_get_user()
     if not user.is_staff():
         req_helper.throw_not_allowed()
+
+    table = req_helper.get_optional_key('table')
+
+    if table is not None:
+        try:
+            table = int(table)
+        except ValueError:
+            req_helper.throw_operation_failed("Table must be a number!")
+
     
     if user.is_waiter():
         # Get ready
-        out = Tab.get_orders(1)
+        out = Tab.get_orders(status=1, table=table)
     elif user.is_cook():
         # Get unready
-        out = Tab.get_orders(0)
+        out = Tab.get_orders(status=0, table=table)
     else:
         # Get all
-        out = Tab.get_orders()
+        out = Tab.get_orders(table=table)
     return jsonify(out)
 
 

@@ -182,13 +182,19 @@ class Tab:
 
 
     @staticmethod
-    def get_orders(status=None):
+    def get_orders(status=None, table=None):
+        if table is not None:
+            table = {"table":table}
+        else:
+            table = {}
+
         if status is not None:
             status = {"orders.status":status}
         else:
             status = {}
         pipeline = [
             {"$unwind":"$orders"},
+            {'$match':table},
             {'$match':status},
             {'$replaceRoot':{'newRoot':'$orders'}}
         ]
