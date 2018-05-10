@@ -1,4 +1,4 @@
-from project.db import get_db
+from project.db import get_db, load_kv
 from datetime import datetime, timedelta
 
 class InventoryReport:
@@ -81,5 +81,7 @@ class TabReport:
             }}
         ]
         cursor = get_db().tab_log.aggregate(pipeline)
-        return [doc for doc in cursor]
+        tables = load_kv('tables')
+        data = {doc['X']:doc['Y'] for doc in cursor}
+        return [{'X':X, 'Y':(data[X] if X in data else 0)} for X in range(1, tables+1)]
 
