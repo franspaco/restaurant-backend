@@ -85,3 +85,25 @@ class TabReport:
         data = {doc['X']:doc['Y'] for doc in cursor}
         return [{'X':X, 'Y':(data[X] if X in data else 0)} for X in range(1, tables+1)]
 
+    @staticmethod
+    def waiter_report(days=1):
+        pipeline = [
+            {'$match':{
+                'close_time':{
+                    '$gt': datetime.now() - timedelta(days=days)
+                }
+            }},
+            {'$unwind':'$orders'},
+            {'$group':{
+                '_id':{'id':'$waiter.id', 'name':'$waiter.name'},
+                'value':{'$sum':'$orders.cost'}
+            }},
+            {'$project':{
+                '_id':0,
+                'name':'$_id.name',
+                'value':1
+            }}
+        ]
+        cursor = get_db().tab_log.aggregate(pipeline)
+        return [doc for doc in cursor]
+

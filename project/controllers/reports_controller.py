@@ -35,6 +35,15 @@ def report_tables(days=1):
     return jsonify(data=TabReport.tables_report(days))
 
 
+@bp.route('/waiter-tabs', methods=['POST'], strict_slashes=False)
+@bp.route('/waiter-tabs/<int:days>', methods=['POST'])
+def report_waiters(days=1):
+    user = req_helper.force_session_get_user()
+    if not user.is_management():
+        req_helper.throw_not_allowed()
+    return jsonify(data=TabReport.waiter_report(days))
+
+
 @bp.route('/customer/tabs', methods=['POST'])
 def reports_customer():
     user = req_helper.force_session_get_user()
