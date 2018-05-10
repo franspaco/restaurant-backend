@@ -60,4 +60,26 @@ class TabReport:
         ]
         cursor = get_db().tab_log.aggregate(pipeline)
         return [doc for doc in cursor]
+    
+    @staticmethod
+    def tables_report(days=1):
+        pipeline = [
+            {'$match':{
+                'close_time':{
+                    '$gt': datetime.now() - timedelta(days=days)
+                }
+            }},
+            {'$unwind':'$orders'},
+            {'$group':{
+                '_id':'$table',
+                'Y':{'$sum':'$orders.cost'}
+            }},
+            {'$project':{
+                '_id':0,
+                'X':'$_id',
+                'Y':1
+            }}
+        ]
+        cursor = get_db().tab_log.aggregate(pipeline)
+        return [doc for doc in cursor]
 

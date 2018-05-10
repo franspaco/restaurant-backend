@@ -26,6 +26,15 @@ def reports_expense_inventory(days=1):
     return jsonify(data=InventoryReport.expense_pie_chart_report(days))
 
 
+@bp.route('/tables', methods=['POST'], strict_slashes=False)
+@bp.route('/tables/<int:days>', methods=['POST'])
+def report_tables(days=1):
+    user = req_helper.force_session_get_user()
+    if not user.is_management():
+        req_helper.throw_not_allowed()
+    return jsonify(data=TabReport.tables_report(days))
+
+
 @bp.route('/customer/tabs', methods=['POST'])
 def reports_customer():
     user = req_helper.force_session_get_user()
