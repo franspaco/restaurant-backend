@@ -5,7 +5,7 @@ from project.helpers import req_helper
 
 bp = Blueprint('tables', __name__)
 
-@bp.route('/', methods=['POST'])
+@bp.route('/', methods=['POST'], strict_slashes=False)
 def tables_get():
     req_helper.force_session_get_user()
     tables = load_kv('tables')
