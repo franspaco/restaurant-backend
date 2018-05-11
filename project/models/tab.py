@@ -69,7 +69,8 @@ class Tab:
             'order-time': datetime.now().isoformat(),
             'eta': (datetime.now() + timedelta(minutes=recipe.time)).isoformat(),
             'status': 0,
-            'tab-id': self.id
+            'tab-id': self.id,
+            'table': self.table
         }
         self.orders.append(new_data)
         result = get_db().tabs.update_one({'_id': ObjectId(self.id)}, {'$push': {'orders': new_data}})
@@ -180,6 +181,17 @@ class Tab:
     def get_customer_tabs(uid):
         return Tab.query({'customers.id': uid})
 
+    @staticmethod
+    def get_orders_customer(id):
+        pipeline = [
+            {'$match':{'customers.id':id}},
+            {"$unwind":"$orders"},
+            {'$replaceRoot':{'newRoot':'$orders'}}
+        ]
+        print(pipeline)
+        cursor = get_db().tabs.aggregate(pipeline)
+        return [doc for doc in cursor]
+
 
     @staticmethod
     def get_orders(status=None, table=None):
@@ -192,6 +204,7 @@ class Tab:
             status = {"orders.status":status}
         else:
             status = {}
+
         pipeline = [
             {"$unwind":"$orders"},
             {'$match':table},

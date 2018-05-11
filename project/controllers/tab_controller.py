@@ -56,7 +56,11 @@ def tabs_get_by_user():
 def get_orders():
     user = req_helper.force_session_get_user()
     if not user.is_staff():
-        req_helper.throw_not_allowed()
+        if user.is_customer():
+            return jsonify(Tab.get_orders_customer(user.id))
+        else:
+            return req_helper.throw_not_allowed()
+
 
     table = req_helper.get_optional_key('table')
 
