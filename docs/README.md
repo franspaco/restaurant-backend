@@ -10,6 +10,8 @@ Navigate to docker/ and run:
 
 This sets up everything.
 
+Then, open with a brouser the url: `http://<host>/init` and fillout the setup form. After this, the server is ready.
+
 ## Generic deployment
 Pull with `docker pull franspaco/moviles1`
 
