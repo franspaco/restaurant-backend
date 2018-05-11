@@ -34,6 +34,7 @@ Example. The configuration currently running for the demo.
 
 `docker run --name srvr1 --env MONGO_HOST=mongo-restart -p 80:80 --restart always --link mongo-restart -d franspaco/moviles2`
 
+*Note: in this case the database is running on a separate container, so it must be linked and its name used as the host for connecting to the database (The MONGO_HOST env var).*
 
 ## Env vars:
 
