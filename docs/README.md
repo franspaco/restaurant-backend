@@ -1,38 +1,38 @@
 
-# Basic docker config
+# Deployment
+The server is deployed using docker. It lives in the image [franspaco/moviles2](https://hub.docker.com/r/franspaco/moviles2/) which is based on [tiangolo/uwsgi-nginx-flask](https://hub.docker.com/r/tiangolo/uwsgi-nginx-flask/).
 
+This image provides a flask+uwsgi+nginx instalaltion onto which the app is inserted.
 
 ## Easiest option: docker compose
-
-Navigate to docker/ and run:
+Navigate to `docker/` where `docker-compose.yml` resides and run:
 
 `docker-compose up`
 
 This sets up everything.
 
-Then, open with a brouser the url: `http://<host>/init` and fillout the setup form. After this, the server is ready.
-
 ## Generic deployment
-Pull with `docker pull franspaco/moviles1`
+
+It is recommended to use a mongo container, see [Mongo in DockerHub](https://hub.docker.com/_/mongo/).
+
+Pull with `docker pull franspaco/moviles2`
 
 Run with
 
-`sudo docker run --name <some-name> --env MONGO_HOST=<MONGODB_HOST> -p 80:80 -d franspaco/moviles1`
+`sudo docker run --name <some-name> --env MONGO_HOST=<MONGODB_HOST> -p 80:80 -d franspaco/moviles2`
 
 
 Optional:
 `--link <mongo_container>`
 `--restart always`
 
-## Azure deployment
+### Azure deployment
 
-Requires a mongo container.
+`docker run --name <some-name> --env MONGO_HOST=<MONGODB_HOST> -p 80:80 -d franspaco/moviles2`
 
-`docker run --name <some-name> --env MONGO_HOST=<MONGODB_HOST> -p 80:80 -d franspaco/moviles1`
+Example. The configuration currently running for the demo.
 
-Demo of run currently being used:
-
-`docker run --name srvr1 --env MONGO_HOST=mongo-restart -p 80:80 --restart always --link mongo-restart -d franspaco/moviles1`
+`docker run --name srvr1 --env MONGO_HOST=mongo-restart -p 80:80 --restart always --link mongo-restart -d franspaco/moviles2`
 
 
 ## Env vars:
@@ -47,4 +47,4 @@ Demo of run currently being used:
 
 Open up the address of the server. It should respond "Hello world"
 
-Go to `http://<host>/init` and fill out the form.
+Go to `http://<host>/init` and fill out the setup form. After this, the server is ready.
