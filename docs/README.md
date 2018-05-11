@@ -2,6 +2,14 @@
 # Basic docker config
 
 
+## Easiest option: docker compose
+
+Navigate to docker/ and run:
+
+`docker-compose up`
+
+This sets up everything.
+
 ## Generic deployment
 Pull with `docker pull franspaco/moviles1`
 
@@ -31,3 +39,10 @@ Demo of run currently being used:
 * PORT: the port to listen to (default: 80)
 * MONGO_HOST: host of the mongo database (default: localhost)
 * MONGO_PORT: port of the mongo database (default: 27017)
+
+
+# Set up:
+
+Open up the address of the server. It should respond "Hello world"
+
+Go to `http://<host>/init` and fill out the form.

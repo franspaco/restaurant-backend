@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <style>
+            html {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            .field {
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Enter the following data:</h2>
+        <form action="/init" method="post" id="form">
+            <hr>
+            <div class="field">
+                <label for="a_username">Admin username:</label>
+                <br>
+                <input type="text" name="username" placeholder="username" id="a_username">
+            </div>
+            <div class="field">
+                <label for="a_password">Admin password:</label>
+                <br>
+                <input type="password" name="password" id="a_password">
+            </div>
+            <div class="field">
+                <label for="a_name">Admin name:</label>
+                <br>
+                <input type="text" name="name" id="a_name">
+            </div>
+            <div class="field">
+                <label for="a_email">Admin name:</label>
+                <br>
+                <input type="email" name="email" id="a_email" placeholder="admin@example.com">
+            </div>
+            <hr>
+            <div class="field">
+                <label for="tables">Number of tables in the restaurant:</label>
+                <br>
+                <input type="number" name="tables" id="tables" placeholder="20">
+            </div>
+            <div class="field">
+                <input type="submit">
+            </div>
+        </form>
+    </body>
+</html>

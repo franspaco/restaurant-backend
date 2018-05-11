@@ -4,7 +4,7 @@ services:
         image: mongo:latest
         restart: always
 
-    restaurant-backent:
+    restaurant-backend:
         image: franspaco/moviles2
         depends_on:
             - mongodb-restart
