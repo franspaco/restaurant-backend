@@ -1,0 +1,17 @@
+version: '3'
+services:
+    mongodb-restart:
+        image: mongo:latest
+        restart: always
+
+    restaurant-backent:
+        image: franspaco/moviles2
+        depends_on:
+            - mongodb-restart
+        ports:
+            - "80:80"
+        links:
+            - mongodb-restart
+        environment:
+            MONGO_HOST: mongodb-restart
+        restart: always
