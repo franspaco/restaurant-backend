@@ -1,3 +1,18 @@
+# Equipo:
+## Desarrollo de aplicaciones móviles:
+- Omar Sanseviero
+- Miguel Monterrubio
+- Francisco Huelsz
+
+## Bases de datos avanzadas
+- Omar Sanseviero
+- Miguel Monterrubio
+- Victor Rendon
+- Francisco Huelsz
+
+# Documentación, APK y todo lo demás
+
+[http://ubiquitous.csf.itesm.mx/~pddm-1019512/final/](http://ubiquitous.csf.itesm.mx/~pddm-1019512/final/)
 
 # Deployment
 The server is deployed using docker. It lives in the image [franspaco/moviles2](https://hub.docker.com/r/franspaco/moviles2/) which is based on [tiangolo/uwsgi-nginx-flask](https://hub.docker.com/r/tiangolo/uwsgi-nginx-flask/).
